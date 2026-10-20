@@ -1,7 +1,11 @@
-
+#include <inttypes.h>
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <FreeRTOS.h>
+#include <task.h>
+
 
 #include "pico/stdlib.h"
 #include "pico/stdio.h"
@@ -78,12 +82,13 @@ static void printTask(void *arg) {
         sleep_ms(10);
     }
     stdio_puts("=== Printing values for temperature and sensor ===\n");
+    uint32_t BUFFER_SIZE = 67;
     char buf[BUFFER_SIZE];
 
     while (1) {
         TickType_t ticks = xTaskGetTickCount();
         uint32_t ms = ticks * portTICK_PERIOD_MS;
-        sprintf(buf,"time:%d,temp:%d,lux:%d\n",(unsigned long)ms,temp,lux);
+        sprintf(buf,"temp:%d,lux:%d\n", temp, lux);
         stdio_puts(buf);
 
         vTaskDelay(pdMS_TO_TICKS(1500));
@@ -101,8 +106,9 @@ int main (void) {
     TaskHandle_t myPrintHandle = NULL;
 
     // Create tasks
-    xTaskCreate(printingTask, "print", 1024, NULL, 3, &myPrintHandle);
+    xTaskCreate(printTask, "print", 1024, NULL, 3, &myPrintHandle);
     xTaskCreate(sensorTask, "usb", 1024, NULL, 2, &mySensorHandle);
 
     vTaskStartScheduler();
 
+}
