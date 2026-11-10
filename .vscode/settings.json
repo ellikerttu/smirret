@@ -70,5 +70,6 @@
         "pdm_microphone.h": "c",
         "pins.h": "c",
         "optional": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
